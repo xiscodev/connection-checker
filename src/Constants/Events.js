@@ -1,0 +1,6 @@
+const ON_NETWORK_CHECKING = 'onNetworkChecking'
+const ON_NETWORK_CHANGED = 'onNetworkChanged'
+const ON_NETWORK_CONNECTED = 'onNetworkConnected'
+const ON_NETWORK_DISCONNECTED = 'onNetworkDisconnected'
+
+export { ON_NETWORK_CHANGED, ON_NETWORK_CHECKING, ON_NETWORK_CONNECTED, ON_NETWORK_DISCONNECTED }
