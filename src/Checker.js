@@ -20,14 +20,27 @@ const connectionState = () => {
 class Checker {
   constructor () {
     this.networkState = null
-    this.onNetworkChecking = new Event(ON_NETWORK_CHECKING)
-    this.onNetworkChanged = new Event(ON_NETWORK_CHANGED)
-    this.onNetworkConnected = new Event(ON_NETWORK_CONNECTED)
-    this.onNetworkDisconnected = new Event(ON_NETWORK_DISCONNECTED)
     this.checkerInterval = null
   }
 
+  onNetworkChecking () {
+    return new Event(ON_NETWORK_CHECKING)
+  }
+
+  onNetworkChanged (data) {
+    return new CustomEvent(ON_NETWORK_CHANGED, { detail: data })
+  }
+
+  onNetworkConnected () {
+    return new Event(ON_NETWORK_CONNECTED)
+  }
+
+  onNetworkDisconnected () {
+    return new Event(ON_NETWORK_DISCONNECTED)
+  }
+
   _checkNetwork () {
+    this._onNetworkChecking()
     return new Promise((resolve, reject) => {
       fetch('https://google.com', {
         method: 'HEAD',
@@ -35,12 +48,10 @@ class Checker {
         timeout: 2000
       }).then((response) => {
         response.ok
-          ? resolve()
-          // eslint-disable-next-line prefer-promise-reject-errors
-          : reject()
+          ? resolve(this._evaluateNetwork(CONNECTED))
+          : reject(this._evaluateNetwork(DISCONNECTED))
       }).catch(() => {
-        // eslint-disable-next-line prefer-promise-reject-errors
-        reject()
+        reject(this._evaluateNetwork(DISCONNECTED))
       })
     })
   }
@@ -66,24 +77,24 @@ class Checker {
   }
 
   _onNetworkChecking () {
-    window.dispatchEvent(this.onNetworkChecking)
+    window.dispatchEvent(this.onNetworkChecking())
   }
 
   _onNetworkChanged (state) {
-    window.dispatchEvent(this.onNetworkChanged, { fromState: this._getNetworkState(), toState: state })
+    window.dispatchEvent(this.onNetworkChanged({ from: this._getNetworkState(), to: state }))
     state === CONNECTED ? this._onNetworkConnected() : this._onNetworkDisconnected()
   }
 
   _onNetworkConnected () {
     this._setNetworkState(CONNECTED)
     _setState(this._getNetworkState())
-    window.dispatchEvent(this.onNetworkConnected)
+    window.dispatchEvent(this.onNetworkConnected())
   }
 
   _onNetworkDisconnected () {
     this._setNetworkState(DISCONNECTED)
     _setState(this._getNetworkState())
-    window.dispatchEvent(this.onNetworkDisconnected)
+    window.dispatchEvent(this.onNetworkDisconnected())
   }
 
   _hasStarted () {
@@ -92,11 +103,9 @@ class Checker {
 
   _startConnectionChecker () {
     if (!this._hasStarted()) {
-      this.checkerInterval = setInterval(
+      this.checkerInterval = setInterval(() => {
         this._checkNetwork()
-          .then(this._evaluateNetwork(CONNECTED))
-          .catch(this._evaluateNetwork(DISCONNECTED))
-        , 5000)
+      }, 10000)
     }
   }
 
@@ -109,8 +118,6 @@ class Checker {
 
   _checkConnectionOnDemand () {
     return this._checkNetwork()
-      .then(this._evaluateNetwork(CONNECTED))
-      .catch(this._evaluateNetwork(DISCONNECTED))
   }
 }
 
@@ -133,7 +140,7 @@ const stopConnectionChecker = () => {
 const checkConnectionOnDemand = () => {
   let instance = new Checker()
   instance._checkConnectionOnDemand()
-    .finaly(() => {
+    .finally(() => {
       instance = null
     })
 }
