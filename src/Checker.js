@@ -13,7 +13,7 @@ const _setState = (state) => {
 const _resetState = () => {
   _setState(null)
 }
-const connectionState = () => {
+const networkState = () => {
   return _getState()
 }
 
@@ -146,7 +146,7 @@ const checkConnectionOnDemand = () => {
 }
 
 export {
-  connectionState,
+  networkState,
   startConnectionChecker,
   stopConnectionChecker,
   checkConnectionOnDemand
