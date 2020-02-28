@@ -1,6 +1,6 @@
 {
   "name": "connection-checker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A network connection checker",
   "author": "José Diaz <info@josediaz.site> (https://josediaz.site)",
   "license": "MIT",
