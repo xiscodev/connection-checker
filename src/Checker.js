@@ -33,7 +33,6 @@ const _resetState = () => {
   _setState(null)
 }
 
-
 /**
  * @access protected
  * @description Contains the main logic part of the connection checker library.
@@ -284,7 +283,6 @@ class Checker {
     return this._checkNetwork()
   }
 }
-
 
 /**
  * @access public
