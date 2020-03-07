@@ -4,7 +4,7 @@
 
 <h1 style="text-align:center;">Connection Checker</h1>
 
-## What ?
+## What is this?
 A simple library to know the state of internet connection.
 
 ## How to use it?
@@ -14,13 +14,13 @@ First you need to import it in your project
 - The require way
 
 ```js
-let { ConnectionEvent, startConnectionChecker } = require("connection-checker");
+let { ConnectionEvent, startChecker } = require("connection-checker");
 ```
 
 - The import way
 
 ```js
-import { ConnectionEvent, checkConnectionOnDemand } from "connection-checker";
+import { ConnectionEvent, checkOnDemand } from "connection-checker";
 ```
 .
 .
@@ -29,26 +29,27 @@ import { ConnectionEvent, checkConnectionOnDemand } from "connection-checker";
 Then use it to know your state one time on demand
 
 ```js
-  import { ConnectionEvent, checkConnectionOnDemand } from "connection-checker";
+  import { ConnectionEvent, checkOnDemand } from "connection-checker";
 
   window.addEventListener(ConnectionEvent.ON_NETWORK_CONNECTED, function() {
     // YOUR OWN CODE AND STUFF
   })
 
-  checkConnectionOnDemand()
+  checkOnDemand()
 ```
 
 
 Or frequently (every 10 secs)
 
 ```js
-  import { ConnectionEvent, startConnectionChecker } from "connection-checker";
+  import { ConnectionEvent, startChecker } from "connection-checker";
 
   window.addEventListener(ConnectionEvent.ON_NETWORK_CHANGED, function() {
     // YOUR OWN CODE AND STUFF
   })
 
-  startConnectionChecker()
+  startChecker()
 ```
+You can always refer to library documentation [here](api.md)
 
 Powered by <a href="https://deepertech.com" target="_blank">Deepertech</a>

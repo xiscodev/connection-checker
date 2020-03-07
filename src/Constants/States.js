@@ -1,12 +1,19 @@
 /**
- * @description Connected network state
- * @constant {string}
+ * @description Contains connection states
+ * @constant {Object}
  */
-const CONNECTED = 'CONNECTED'
-/**
- * @description Disconnected network state
- * @constant {string}
- */
-const DISCONNECTED = 'DISCONNECTED'
+const ConnectionState = {
+  /**
+   * @description Connected network state
+   * @constant {ConnectionState}
+   */
+  CONNECTED: 'CONNECTED',
 
-export { CONNECTED, DISCONNECTED }
+  /**
+   * @description Disconnected network state
+   * @constant {ConnectionState}
+   */
+  DISCONNECTED: 'DISCONNECTED'
+}
+
+export default ConnectionState
