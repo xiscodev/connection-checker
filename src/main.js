@@ -1,19 +1,11 @@
-import { CONNECTED, DISCONNECTED } from 'Constants/States'
-import { ON_NETWORK_CHECKING, ON_NETWORK_CHANGED, ON_NETWORK_CONNECTED, ON_NETWORK_DISCONNECTED } from 'Constants/Events'
-import { networkState, isCheckerActive, startConnectionChecker, stopConnectionChecker, checkConnectionOnDemand } from 'Checker'
+import ConnectionState from 'Constants/States'
+import ConnectionEvent from 'Constants/Events'
+import { getConnectionState, isCheckerActive, startChecker, stopChecker, checkOnDemand } from 'Checker'
 
-exports.ConnectionState = {
-  CONNECTED,
-  DISCONNECTED
-}
-exports.ConnectionEvent = {
-  ON_NETWORK_CHECKING,
-  ON_NETWORK_CHANGED,
-  ON_NETWORK_CONNECTED,
-  ON_NETWORK_DISCONNECTED
-}
-exports.networkState = networkState
+exports.ConnectionState = ConnectionState
+exports.ConnectionEvent = ConnectionEvent
+exports.getConnectionState = getConnectionState
 exports.isCheckerActive = isCheckerActive
-exports.startConnectionChecker = startConnectionChecker
-exports.stopConnectionChecker = stopConnectionChecker
-exports.checkConnectionOnDemand = checkConnectionOnDemand
+exports.startChecker = startChecker
+exports.stopChecker = stopChecker
+exports.checkOnDemand = checkOnDemand
