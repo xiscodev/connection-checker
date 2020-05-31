@@ -3,32 +3,47 @@
 ### Table of Contents
 
 -   [getConnectionState][1]
--   [isCheckerActive][2]
--   [startChecker][3]
--   [stopChecker][4]
--   [checkOnDemand][5]
--   [REQUEST_TIMEOUT][6]
--   [REQUEST_TIMEOUT][7]
--   [ConnectionEvent][8]
-    -   [ON_NETWORK_CHECKING][9]
-    -   [ON_NETWORK_CHANGED][10]
-    -   [ON_NETWORK_CONNECTED][11]
-    -   [ON_NETWORK_DISCONNECTED][12]
--   [ConnectionState][13]
-    -   [CONNECTED][14]
-    -   [DISCONNECTED][15]
+-   [changeTimeout][2]
+-   [changeInterval][3]
+-   [isCheckerActive][4]
+-   [startChecker][5]
+-   [stopChecker][6]
+-   [checkOnDemand][7]
+-   [REQUEST_INTERVAL_TIME][8]
+-   [REQUEST_INTERVAL_TIME][9]
+-   [REQUEST_TIMEOUT_TIME][10]
+-   [ConnectionEvent][11]
+    -   [ON_NETWORK_CHECKING][12]
+    -   [ON_NETWORK_CHANGED][13]
+    -   [ON_NETWORK_CONNECTED][14]
+    -   [ON_NETWORK_DISCONNECTED][15]
+-   [ConnectionState][16]
+    -   [CONNECTED][17]
+    -   [DISCONNECTED][18]
 
 ## getConnectionState
 
 Retrieves the stored network state.
 
-Returns **([ConnectionState][16] \| [NULL][17])** 
+Returns **([ConnectionState][19] \| [NULL][20])** 
+
+## changeTimeout
+
+Changes request timeout time of fetchs.
+
+Returns **(numbr | [NULL][20])** 
+
+## changeInterval
+
+Changes ineterval time to launch network checks.
+
+Returns **([number][21] \| [NULL][20])** 
 
 ## isCheckerActive
 
 Checks if exist an instance of Checker class.
 
-Returns **[boolean][18]** 
+Returns **[boolean][22]** 
 
 ## startChecker
 
@@ -42,104 +57,116 @@ Stops the execution of network validations and destroys active instance of Check
 
 Creates instance of Checker, execute a network validation once, and destroys the created instance.
 
-## REQUEST_TIMEOUT
+## REQUEST_INTERVAL_TIME
 
 Collection of remote server urls with method to request resource.
 
-Type: [Object][19]
+Type: [Object][23]
 
-## REQUEST_TIMEOUT
+## REQUEST_INTERVAL_TIME
 
-Collection of remote server urls with method to request resource.
+Interval time to run fetch requests.
 
-Type: [number][20]
+Type: [number][21]
+
+## REQUEST_TIMEOUT_TIME
+
+Timeout value for fetch requests.
+
+Type: [number][21]
 
 ## ConnectionEvent
 
 Contains connection events
 
-Type: [Object][19]
+Type: [Object][23]
 
 ### ON_NETWORK_CHECKING
 
 Checking network event name.
 
-Type: [ConnectionEvent][21]
+Type: [ConnectionEvent][24]
 
 ### ON_NETWORK_CHANGED
 
 Changed network event name.
 
-Type: [ConnectionEvent][21]
+Type: [ConnectionEvent][24]
 
 ### ON_NETWORK_CONNECTED
 
 Connected network event name.
 
-Type: [ConnectionEvent][21]
+Type: [ConnectionEvent][24]
 
 ### ON_NETWORK_DISCONNECTED
 
 Disconnected network event name.
 
-Type: [ConnectionEvent][21]
+Type: [ConnectionEvent][24]
 
 ## ConnectionState
 
 Contains connection states
 
-Type: [Object][19]
+Type: [Object][23]
 
 ### CONNECTED
 
 Connected network state
 
-Type: [ConnectionState][16]
+Type: [ConnectionState][19]
 
 ### DISCONNECTED
 
 Disconnected network state
 
-Type: [ConnectionState][16]
+Type: [ConnectionState][19]
 
 [1]: #getconnectionstate
 
-[2]: #ischeckeractive
+[2]: #changetimeout
 
-[3]: #startchecker
+[3]: #changeinterval
 
-[4]: #stopchecker
+[4]: #ischeckeractive
 
-[5]: #checkondemand
+[5]: #startchecker
 
-[6]: #request_timeout
+[6]: #stopchecker
 
-[7]: #request_timeout-1
+[7]: #checkondemand
 
-[8]: #connectionevent
+[8]: #request_interval_time
 
-[9]: #on_network_checking
+[9]: #request_interval_time-1
 
-[10]: #on_network_changed
+[10]: #request_timeout_time
 
-[11]: #on_network_connected
+[11]: #connectionevent
 
-[12]: #on_network_disconnected
+[12]: #on_network_checking
 
-[13]: #connectionstate
+[13]: #on_network_changed
 
-[14]: #connected
+[14]: #on_network_connected
 
-[15]: #disconnected
+[15]: #on_network_disconnected
 
 [16]: #connectionstate
 
-[17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null
+[17]: #connected
 
-[18]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[18]: #disconnected
 
-[19]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[19]: #connectionstate
 
-[20]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[20]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null
 
-[21]: #connectionevent
+[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[24]: #connectionevent
