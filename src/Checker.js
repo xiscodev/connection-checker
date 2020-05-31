@@ -1,5 +1,5 @@
 import ConnectionState from 'Constants/States'
-import { REMOTE_RESOURCE, REQUEST_TIMEOUT } from 'Constants/Defaults'
+import { REMOTE_RESOURCE, REQUEST_TIMEOUT_TIME, REQUEST_INTERVAL_TIME } from 'Constants/Defaults'
 import { onNetworkChecking, onNetworkChanged, onNetworkConnected, onNetworkDisconnected } from 'NetworkEventEmitter'
 
 /**
@@ -14,7 +14,21 @@ let _connectionState = null,
    * @description Stores the checker instance
    * @type {number|NULL}
    */
-  _checkerInstance = null
+  _checkerInstance = null,
+
+  /**
+   * @access private
+   * @description Fetch timeout set by user
+   * @type {number|NULL}
+   */
+  _fetchTimeout = null,
+
+  /**
+   * @access private
+   * @description Interval time to launch fewtch requests set by user
+   * @type {number|NULL}
+   */
+  _intervalTime = null
 
 /**
  * @access private
@@ -43,6 +57,24 @@ const _getState = () => {
    */
   _resetState = () => {
     _setState(null)
+  },
+
+  /**
+   * @access private
+   * @function _getFetchTimeout
+   * @description Retrieves fetchTimeout value.
+   */
+  _getFetchTimeout = () => {
+    return _fetchTimeout
+  },
+
+  /**
+   * @access private
+   * @function _getIntervalTime
+   * @description Retrieves fetchTimeout value.
+   */
+  _getIntervalTime = () => {
+    return _intervalTime
   }
 
 /**
@@ -72,6 +104,24 @@ class Checker {
      * @memberof Checker
     */
     this.checkerInterval = null
+    /**
+     * @access private
+     * @description Stores the request timeout time.
+     * @property {number|NULL}
+     * @memberof Checker
+    */
+    this.fetchTimeout = _getFetchTimeout()
+      ? _getFetchTimeout()
+      : REQUEST_TIMEOUT_TIME
+    /**
+     * @access private
+     * @description Stores the interval time to launch fetchs.
+     * @property {number|NULL}
+     * @memberof Checker
+    */
+    this.intervalTime = _getIntervalTime()
+      ? _getIntervalTime()
+      : REQUEST_INTERVAL_TIME
   }
 
   /**
@@ -86,17 +136,17 @@ class Checker {
     this._dispatchNetworkChecking()
     return new Promise((resolve, reject) => {
       const fetchUrl = REMOTE_RESOURCE[0].url,
-        fetchMethod = REMOTE_RESOURCE[0].method
-
-      fetch(fetchUrl, {
+        fetchMethod = REMOTE_RESOURCE[0].method,
+        noCache = btoa(Date.now())
+      fetch(`${fetchUrl}/?nc=${noCache}`, {
         method: fetchMethod,
         mode: 'cors',
-        timeout: REQUEST_TIMEOUT
+        timeout: this.fetchTimeout
       }).then((response) => {
         response.ok
           ? resolve(this._evaluateNetwork(ConnectionState.CONNECTED))
           : reject(this._evaluateNetwork(ConnectionState.DISCONNECTED))
-      }).catch(() => {
+      }).catch((e) => {
         reject(this._evaluateNetwork(ConnectionState.DISCONNECTED))
       })
     })
@@ -229,7 +279,7 @@ class Checker {
     if (!this._isCheckerActive()) {
       this.checkerInterval = setInterval(() => {
         this._checkNetwork()
-      }, 10000)
+      }, this.intervalTime)
     }
   }
 
@@ -266,6 +316,26 @@ class Checker {
  */
 const getConnectionState = () => {
     return _getState()
+  },
+
+  /**
+   * @access public
+   * @function changeTimeout
+   * @description Changes request timeout time of fetchs.
+   * @returns {numbr|NULL}
+   */
+  changeTimeout = (timeoutTime = null) => {
+    _fetchTimeout = timeoutTime
+  },
+
+  /**
+   * @access public
+   * @function changeInterval
+   * @description  Changes ineterval time to launch network checks.
+   * @returns {number|NULL}
+   */
+  changeInterval = (intervalTime = null) => {
+    _intervalTime = intervalTime
   },
 
   /**
@@ -318,6 +388,8 @@ const getConnectionState = () => {
 
 export {
   getConnectionState,
+  changeTimeout,
+  changeInterval,
   isCheckerActive,
   startChecker,
   stopChecker,
