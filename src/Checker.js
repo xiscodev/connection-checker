@@ -1,18 +1,20 @@
 import ConnectionState from 'Constants/States'
-import ConnectionEvent from 'Constants/Events'
+import { REMOTE_RESOURCE, REQUEST_TIMEOUT } from 'Constants/Defaults'
+import { onNetworkChecking, onNetworkChanged, onNetworkConnected, onNetworkDisconnected } from 'NetworkEventEmitter'
 
 /**
  * @access private
  * @description Stores the connection state
  * @type {ConnectionState|NULL}
  */
-let _connectionState = null
-/**
- * @access private
- * @description Stores the checker instance
- * @type {number|NULL}
- */
-let _checkerInstance = null
+let _connectionState = null,
+
+  /**
+   * @access private
+   * @description Stores the checker instance
+   * @type {number|NULL}
+   */
+  _checkerInstance = null
 
 /**
  * @access private
@@ -21,27 +23,27 @@ let _checkerInstance = null
  * @returns {ConnectionState}
  */
 const _getState = () => {
-  return _connectionState
-}
+    return _connectionState
+  },
 
-/**
- * @access private
- * @function _setState
- * @description Set _connectionState value to state.
- * @param {ConnectionState|NULL} state
- */
-const _setState = (state) => {
-  _connectionState = state
-}
+  /**
+   * @access private
+   * @function _setState
+   * @description Set _connectionState value to state.
+   * @param {ConnectionState|NULL} state
+   */
+  _setState = (state) => {
+    _connectionState = state
+  },
 
-/**
- * @access private
- * @function _resetState
- * @description Reset _connectionState value.
- */
-const _resetState = () => {
-  _setState(null)
-}
+  /**
+   * @access private
+   * @function _resetState
+   * @description Reset _connectionState value.
+   */
+  _resetState = () => {
+    _setState(null)
+  }
 
 /**
  * @access private
@@ -74,51 +76,6 @@ class Checker {
 
   /**
    * @access private
-   * @function onNetworkChecking
-   * @description Retrieves a ON_NETWORK_CHECKING event.
-   * @returns {ConnectionEvent}
-   * @memberof Checker
-   */
-  onNetworkChecking () {
-    return new Event(ConnectionEvent.ON_NETWORK_CHECKING)
-  }
-
-  /**
-   * @access private
-   * @function onNetworkChanged
-   * @description Retrieves a ON_NETWORK_CHANGED custom event, retrives connection states when emitted.
-   * @param {Object} data Contains connection states 'from' and 'to'.
-   * @returns {ConnectionEvent}
-   * @memberof Checker
-   */
-  onNetworkChanged (data) {
-    return new CustomEvent(ConnectionEvent.ON_NETWORK_CHANGED, { detail: data })
-  }
-
-  /**
-   * @access private
-   * @function onNetworkConnected
-   * @description Retrieves a ON_NETWORK_CONNECTED event.
-   * @returns {ConnectionEvent}
-   * @memberof Checker
-   */
-  onNetworkConnected () {
-    return new Event(ConnectionEvent.ON_NETWORK_CONNECTED)
-  }
-
-  /**
-   * @access private
-   * @function onNetworkDisconnected
-   * @description Retrieves a ON_NETWORK_DISCONNECTED event.
-   * @returns {ConnectionEvent}
-   * @memberof Checker
-   */
-  onNetworkDisconnected () {
-    return new Event(ConnectionEvent.ON_NETWORK_DISCONNECTED)
-  }
-
-  /**
-   * @access private
    * @function _checkNetwork
    * @description Executes ON_NETWORK_CHECKING event dispatcher, generates a Promise
    * which resolves or rejects depending on the resolution of fetch requesting a remote server.
@@ -128,10 +85,13 @@ class Checker {
   _checkNetwork () {
     this._dispatchNetworkChecking()
     return new Promise((resolve, reject) => {
-      fetch('https://google.com', {
-        method: 'HEAD',
+      const fetchUrl = REMOTE_RESOURCE[0].url,
+        fetchMethod = REMOTE_RESOURCE[0].method
+
+      fetch(fetchUrl, {
+        method: fetchMethod,
         mode: 'cors',
-        timeout: 2000
+        timeout: REQUEST_TIMEOUT
       }).then((response) => {
         response.ok
           ? resolve(this._evaluateNetwork(ConnectionState.CONNECTED))
@@ -205,7 +165,7 @@ class Checker {
    * @memberof Checker
    */
   _dispatchNetworkChecking () {
-    window.dispatchEvent(this.onNetworkChecking())
+    window.dispatchEvent(onNetworkChecking())
   }
 
   /**
@@ -218,7 +178,7 @@ class Checker {
    * @memberof Checker
    */
   _dispatchNetworkChanged (state) {
-    window.dispatchEvent(this.onNetworkChanged({ from: this._getNetworkState(), to: state }))
+    window.dispatchEvent(onNetworkChanged({ from: this._getNetworkState(), to: state }))
     state === ConnectionState.CONNECTED ? this._dispatchNetworkConnected() : this._dispatchNetworkDisconnected()
   }
 
@@ -232,7 +192,7 @@ class Checker {
   _dispatchNetworkConnected () {
     this._setNetworkState(ConnectionState.CONNECTED)
     _setState(this._getNetworkState())
-    window.dispatchEvent(this.onNetworkConnected())
+    window.dispatchEvent(onNetworkConnected())
   }
 
   /**
@@ -245,7 +205,7 @@ class Checker {
   _dispatchNetworkDisconnected () {
     this._setNetworkState(ConnectionState.DISCONNECTED)
     _setState(this._getNetworkState())
-    window.dispatchEvent(this.onNetworkDisconnected())
+    window.dispatchEvent(onNetworkDisconnected())
   }
 
   /**
@@ -305,56 +265,56 @@ class Checker {
  * @returns {ConnectionState|NULL}
  */
 const getConnectionState = () => {
-  return _getState()
-}
+    return _getState()
+  },
 
-/**
- * @access public
- * @function isCheckerActive
- * @description Checks if exist an instance of Checker class.
- * @returns {boolean}
- */
-const isCheckerActive = () => {
-  return !!_checkerInstance
-}
+  /**
+   * @access public
+   * @function isCheckerActive
+   * @description Checks if exist an instance of Checker class.
+   * @returns {boolean}
+   */
+  isCheckerActive = () => {
+    return !!_checkerInstance
+  },
 
-/**
- * @access public
- * @function startChecker
- * @description Generates an instance of a Checker which keeps executing network validations.
- */
-const startChecker = () => {
-  if (!isCheckerActive()) {
-    _resetState()
-    _checkerInstance = new Checker()
-    _checkerInstance._startConnectionChecker()
+  /**
+   * @access public
+   * @function startChecker
+   * @description Generates an instance of a Checker which keeps executing network validations.
+   */
+  startChecker = () => {
+    if (!isCheckerActive()) {
+      _resetState()
+      _checkerInstance = new Checker()
+      _checkerInstance._startConnectionChecker()
+    }
+  },
+
+  /**
+   * @access public
+   * @function stopChecker
+   * @description Stops the execution of network validations and destroys active instance of Checker.
+   */
+  stopChecker = () => {
+    if (isCheckerActive()) {
+      _checkerInstance._stopConnectionChecker()
+      _checkerInstance = null
+    }
+  },
+
+  /**
+   * @access public
+   * @function checkOnDemand
+   * @description Creates instance of Checker, execute a network validation once, and destroys the created instance.
+   */
+  checkOnDemand = () => {
+    let instance = new Checker()
+    instance._checkConnectionOnDemand()
+      .finally(() => {
+        instance = null
+      })
   }
-}
-
-/**
- * @access public
- * @function stopChecker
- * @description Stops the execution of network validations and destroys active instance of Checker.
- */
-const stopChecker = () => {
-  if (isCheckerActive()) {
-    _checkerInstance._stopConnectionChecker()
-    _checkerInstance = null
-  }
-}
-
-/**
- * @access public
- * @function checkOnDemand
- * @description Creates instance of Checker, execute a network validation once, and destroys the created instance.
- */
-const checkOnDemand = () => {
-  let instance = new Checker()
-  instance._checkConnectionOnDemand()
-    .finally(() => {
-      instance = null
-    })
-}
 
 export {
   getConnectionState,
