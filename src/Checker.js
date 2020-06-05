@@ -404,14 +404,14 @@ const getConnectionState = () => {
    * @description  Changes the use of default INTERNET_REMOTE_RESOURCE for user provided internet resource.
    * @param {Object|Array|NULL} internetResource
    * @example <caption>Single internet resource case</caption>
-   * // singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
-   * // changeInternetResource(singleResource)
+   * singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
+   * changeInternetResource(singleResource)
    * @example <caption>Multiple internet resource case</caption>
-   * // multipleResource = [
-   * //   {url: 'http://fakeResourceOne.com', method: 'GET'}
-   * //   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
-   * // ]
-   * // changeInternetResource(multipleResource)
+   * multipleResource = [
+   *   {url: 'http://fakeResourceOne.com', method: 'GET'}
+   *   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
+   * ]
+   * changeInternetResource(multipleResource)
    */
   changeInternetResource = (internetResource = null) => {
     _internetResource = internetResource
