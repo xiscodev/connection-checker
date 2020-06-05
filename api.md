@@ -4,46 +4,84 @@
 
 -   [getConnectionState][1]
 -   [changeTimeout][2]
--   [changeInterval][3]
--   [isCheckerActive][4]
--   [startChecker][5]
--   [stopChecker][6]
--   [checkOnDemand][7]
--   [REQUEST_INTERVAL_TIME][8]
--   [REQUEST_INTERVAL_TIME][9]
--   [REQUEST_TIMEOUT_TIME][10]
--   [ConnectionEvent][11]
-    -   [ON_NETWORK_CHECKING][12]
-    -   [ON_NETWORK_CHANGED][13]
-    -   [ON_NETWORK_CONNECTED][14]
-    -   [ON_NETWORK_DISCONNECTED][15]
--   [ConnectionState][16]
-    -   [CONNECTED][17]
-    -   [DISCONNECTED][18]
+    -   [Parameters][3]
+-   [changeInterval][4]
+    -   [Parameters][5]
+-   [changeInternetResource][6]
+    -   [Parameters][7]
+    -   [Examples][8]
+-   [isCheckerActive][9]
+-   [startChecker][10]
+-   [stopChecker][11]
+-   [checkOnDemand][12]
+-   [REQUEST_INTERVAL_TIME][13]
+-   [REQUEST_INTERVAL_TIME][14]
+-   [REQUEST_TIMEOUT_TIME][15]
+-   [ConnectionEvent][16]
+    -   [ON_NETWORK_CHECKING][17]
+    -   [ON_NETWORK_CHANGED][18]
+    -   [ON_NETWORK_CONNECTED][19]
+    -   [ON_NETWORK_DISCONNECTED][20]
+-   [ConnectionState][21]
+    -   [CONNECTED][22]
+    -   [DISCONNECTED][23]
 
 ## getConnectionState
 
 Retrieves the stored network state.
 
-Returns **([ConnectionState][19] \| [NULL][20])** 
+Returns **([ConnectionState][24] \| [NULL][25])** 
 
 ## changeTimeout
 
 Changes request timeout time of fetchs.
 
-Returns **(numbr | [NULL][20])** 
+### Parameters
+
+-   `timeoutTime` **([number][26] \| [NULL][25])** 
 
 ## changeInterval
 
-Changes ineterval time to launch network checks.
+Changes interval time to launch network checks.
 
-Returns **([number][21] \| [NULL][20])** 
+### Parameters
+
+-   `intervalTime` **([number][26] \| [NULL][25])** 
+
+## changeInternetResource
+
+Changes the use of default INTERNET_REMOTE_RESOURCE for user provided internet resource.
+
+### Parameters
+
+-   `internetResource` **([Object][27] \| [Array][28] \| [NULL][25])** 
+
+### Examples
+
+Single internet resource case
+
+
+```javascript
+// singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
+// changeInternetResource(singleResource)
+```
+
+Multiple internet resource case
+
+
+```javascript
+// multipleResource = [
+//   {url: 'http://fakeResourceOne.com', method: 'GET'}
+//   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
+// ]
+// changeInternetResource(multipleResource)
+```
 
 ## isCheckerActive
 
 Checks if exist an instance of Checker class.
 
-Returns **[boolean][22]** 
+Returns **[boolean][29]** 
 
 ## startChecker
 
@@ -61,112 +99,124 @@ Creates instance of Checker, execute a network validation once, and destroys the
 
 Collection of remote server urls with method to request resource.
 
-Type: [Object][23]
+Type: [Object][27]
 
 ## REQUEST_INTERVAL_TIME
 
 Interval time to run fetch requests.
 
-Type: [number][21]
+Type: [number][26]
 
 ## REQUEST_TIMEOUT_TIME
 
 Timeout value for fetch requests.
 
-Type: [number][21]
+Type: [number][26]
 
 ## ConnectionEvent
 
 Contains connection events
 
-Type: [Object][23]
+Type: [Object][27]
 
 ### ON_NETWORK_CHECKING
 
 Checking network event name.
 
-Type: [ConnectionEvent][24]
+Type: [ConnectionEvent][30]
 
 ### ON_NETWORK_CHANGED
 
 Changed network event name.
 
-Type: [ConnectionEvent][24]
+Type: [ConnectionEvent][30]
 
 ### ON_NETWORK_CONNECTED
 
 Connected network event name.
 
-Type: [ConnectionEvent][24]
+Type: [ConnectionEvent][30]
 
 ### ON_NETWORK_DISCONNECTED
 
 Disconnected network event name.
 
-Type: [ConnectionEvent][24]
+Type: [ConnectionEvent][30]
 
 ## ConnectionState
 
 Contains connection states
 
-Type: [Object][23]
+Type: [Object][27]
 
 ### CONNECTED
 
 Connected network state
 
-Type: [ConnectionState][19]
+Type: [ConnectionState][24]
 
 ### DISCONNECTED
 
 Disconnected network state
 
-Type: [ConnectionState][19]
+Type: [ConnectionState][24]
 
 [1]: #getconnectionstate
 
 [2]: #changetimeout
 
-[3]: #changeinterval
+[3]: #parameters
 
-[4]: #ischeckeractive
+[4]: #changeinterval
 
-[5]: #startchecker
+[5]: #parameters-1
 
-[6]: #stopchecker
+[6]: #changeinternetresource
 
-[7]: #checkondemand
+[7]: #parameters-2
 
-[8]: #request_interval_time
+[8]: #examples
 
-[9]: #request_interval_time-1
+[9]: #ischeckeractive
 
-[10]: #request_timeout_time
+[10]: #startchecker
 
-[11]: #connectionevent
+[11]: #stopchecker
 
-[12]: #on_network_checking
+[12]: #checkondemand
 
-[13]: #on_network_changed
+[13]: #request_interval_time
 
-[14]: #on_network_connected
+[14]: #request_interval_time-1
 
-[15]: #on_network_disconnected
+[15]: #request_timeout_time
 
-[16]: #connectionstate
+[16]: #connectionevent
 
-[17]: #connected
+[17]: #on_network_checking
 
-[18]: #disconnected
+[18]: #on_network_changed
 
-[19]: #connectionstate
+[19]: #on_network_connected
 
-[20]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null
+[20]: #on_network_disconnected
 
-[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[21]: #connectionstate
 
-[22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[22]: #connected
 
-[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[23]: #disconnected
 
-[24]: #connectionevent
+[24]: #connectionstate
+
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/null
+
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[28]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[30]: #connectionevent
