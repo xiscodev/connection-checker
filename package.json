@@ -1,6 +1,6 @@
 {
   "name": "connection-checker",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A network connection checker",
   "author": "José Diaz <info@josediaz.site> (https://josediaz.site)",
   "license": "MIT",
@@ -42,5 +42,8 @@
     "terser-webpack-plugin": "^2.3.5",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "the-type-validator": "^1.0.3"
   }
 }
