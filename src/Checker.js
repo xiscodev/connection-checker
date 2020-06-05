@@ -1,5 +1,5 @@
 import ConnectionState from 'Constants/States'
-import { REMOTE_RESOURCE, REQUEST_TIMEOUT_TIME, REQUEST_INTERVAL_TIME } from 'Constants/Defaults'
+import { INTERNET_REMOTE_RESOURCE, REQUEST_TIMEOUT_TIME, REQUEST_INTERVAL_TIME } from 'Constants/Defaults'
 import { onNetworkChecking, onNetworkChanged, onNetworkConnected, onNetworkDisconnected } from 'NetworkEventEmitter'
 
 /**
@@ -134,22 +134,42 @@ class Checker {
    */
   _checkNetwork () {
     this._dispatchNetworkChecking()
-    return new Promise((resolve, reject) => {
-      const fetchUrl = REMOTE_RESOURCE[0].url,
-        fetchMethod = REMOTE_RESOURCE[0].method,
-        noCache = btoa(Date.now())
-      fetch(`${fetchUrl}/?nc=${noCache}`, {
-        method: fetchMethod,
-        mode: 'cors',
-        timeout: this.fetchTimeout
-      }).then((response) => {
-        response.ok
-          ? resolve(this._evaluateNetwork(ConnectionState.CONNECTED))
-          : reject(this._evaluateNetwork(ConnectionState.DISCONNECTED))
-      }).catch((e) => {
-        reject(this._evaluateNetwork(ConnectionState.DISCONNECTED))
-      })
+    const noCache = btoa(Date.now()),
+      networkRequests = []
+    let allPromiseSettled = null
+
+    for (let index = 0; index < INTERNET_REMOTE_RESOURCE.length; index++) {
+      const fetchUrl = INTERNET_REMOTE_RESOURCE[index].url,
+        fetchMethod = INTERNET_REMOTE_RESOURCE[index].method,
+        fetchRequest = fetch(`${fetchUrl}/?nc=${noCache}`, {
+          method: fetchMethod,
+          mode: 'cors',
+          timeout: this.fetchTimeout
+        })
+      networkRequests.push(fetchRequest)
+    }
+
+    allPromiseSettled = Promise.allSettled(networkRequests).then((results) => {
+      let failedRequests = 0
+      for (let index = 0; index < results.length; index++) {
+        if (results[index].status === 'rejected') {
+          failedRequests++
+        }
+      }
+
+      const ALL_REQUESTS_FAILED = failedRequests === results.length,
+        SOME_REQUESTS_FAILED = failedRequests > 0 && failedRequests < results.length
+
+      if (ALL_REQUESTS_FAILED) {
+        this._evaluateNetwork(ConnectionState.DISCONNECTED)
+      } else if (SOME_REQUESTS_FAILED) {
+        this._evaluateNetwork(ConnectionState.CONNECTED)
+      } else {
+        this._evaluateNetwork(ConnectionState.CONNECTED)
+      }
     })
+
+    return allPromiseSettled
   }
 
   /**
