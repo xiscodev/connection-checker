@@ -1,6 +1,7 @@
 import ConnectionState from 'Constants/States'
 import { INTERNET_REMOTE_RESOURCE, REQUEST_TIMEOUT_TIME, REQUEST_INTERVAL_TIME } from 'Constants/Defaults'
 import { onNetworkChecking, onNetworkChanged, onNetworkConnected, onNetworkDisconnected } from 'NetworkEventEmitter'
+import { isObject, isArray, isNull, isString } from 'the-type-validator'
 
 /**
  * @access private
@@ -25,10 +26,17 @@ let _connectionState = null,
 
   /**
    * @access private
-   * @description Interval time to launch fewtch requests set by user
+   * @description Interval time to launch fetch requests set by user
    * @type {number|NULL}
    */
-  _intervalTime = null
+  _intervalTime = null,
+
+  /**
+   * @access private
+   * @description Internet remote resource to fetch set by user
+   * @type {Object|Array|NULL}
+   */
+  _internetResource = null
 
 /**
  * @access private
@@ -75,6 +83,15 @@ const _getState = () => {
    */
   _getIntervalTime = () => {
     return _intervalTime
+  },
+
+  /**
+   * @access private
+   * @function _getInternetResource
+   * @description Retrieves user defined internet remote resource value.
+   */
+  _getInternetResource = () => {
+    return _internetResource
   }
 
 /**
@@ -122,6 +139,15 @@ class Checker {
     this.intervalTime = _getIntervalTime()
       ? _getIntervalTime()
       : REQUEST_INTERVAL_TIME
+    /**
+     * @access private
+     * @description Stores the user defined internet remote resource(s).
+     * @property {Object|Array|NULL}
+     * @memberof Checker
+    */
+    this.internetResources = _getInternetResource()
+      ? _getInternetResource()
+      : INTERNET_REMOTE_RESOURCE
   }
 
   /**
@@ -136,39 +162,53 @@ class Checker {
     this._dispatchNetworkChecking()
     const noCache = btoa(Date.now()),
       networkRequests = []
-    let allPromiseSettled = null
+    let allPromiseSettled = Promise.reject(),
+      fetchData = null
 
-    for (let index = 0; index < INTERNET_REMOTE_RESOURCE.length; index++) {
-      const fetchUrl = INTERNET_REMOTE_RESOURCE[index].url,
-        fetchMethod = INTERNET_REMOTE_RESOURCE[index].method,
-        fetchRequest = fetch(`${fetchUrl}/?nc=${noCache}`, {
-          method: fetchMethod,
-          mode: 'cors',
-          timeout: this.fetchTimeout
-        })
-      networkRequests.push(fetchRequest)
+    if (isObject(this.internetResources)) {
+      fetchData = (this.internetResources.url !== undefined &&
+          this.internetResources.method !== undefined)
+        ? [this.internetResources]
+        : null
+    } else if (isArray(this.internetResources)) {
+      fetchData = this.internetResources
     }
 
-    allPromiseSettled = Promise.allSettled(networkRequests).then((results) => {
-      let failedRequests = 0
-      for (let index = 0; index < results.length; index++) {
-        if (results[index].status === 'rejected') {
-          failedRequests++
+    if (isNull(fetchData) || isString(fetchData)) {
+      console.error('Wrong user provided internet resource')
+      this._evaluateNetwork(ConnectionState.DISCONNECTED)
+    } else {
+      for (let index = 0; index < fetchData.length; index++) {
+        const fetchUrl = fetchData[index].url,
+          fetchMethod = fetchData[index].method,
+          fetchRequest = fetch(`${fetchUrl}/?nc=${noCache}`, {
+            method: fetchMethod,
+            mode: 'cors',
+            timeout: this.fetchTimeout
+          })
+        networkRequests.push(fetchRequest)
+      }
+
+      allPromiseSettled = Promise.allSettled(networkRequests).then((results) => {
+        let failedRequests = 0
+        for (let index = 0; index < results.length; index++) {
+          if (results[index].status === 'rejected') {
+            failedRequests++
+          }
         }
-      }
 
-      const ALL_REQUESTS_FAILED = failedRequests === results.length,
-        SOME_REQUESTS_FAILED = failedRequests > 0 && failedRequests < results.length
+        const ALL_REQUESTS_FAILED = failedRequests === results.length,
+          SOME_REQUESTS_FAILED = failedRequests > 0 && failedRequests < results.length
 
-      if (ALL_REQUESTS_FAILED) {
-        this._evaluateNetwork(ConnectionState.DISCONNECTED)
-      } else if (SOME_REQUESTS_FAILED) {
-        this._evaluateNetwork(ConnectionState.CONNECTED)
-      } else {
-        this._evaluateNetwork(ConnectionState.CONNECTED)
-      }
-    })
-
+        if (ALL_REQUESTS_FAILED) {
+          this._evaluateNetwork(ConnectionState.DISCONNECTED)
+        } else if (SOME_REQUESTS_FAILED) {
+          this._evaluateNetwork(ConnectionState.CONNECTED)
+        } else {
+          this._evaluateNetwork(ConnectionState.CONNECTED)
+        }
+      })
+    }
     return allPromiseSettled
   }
 
@@ -342,7 +382,7 @@ const getConnectionState = () => {
    * @access public
    * @function changeTimeout
    * @description Changes request timeout time of fetchs.
-   * @returns {numbr|NULL}
+   * @param {number|NULL} timeoutTime
    */
   changeTimeout = (timeoutTime = null) => {
     _fetchTimeout = timeoutTime
@@ -351,11 +391,30 @@ const getConnectionState = () => {
   /**
    * @access public
    * @function changeInterval
-   * @description  Changes ineterval time to launch network checks.
-   * @returns {number|NULL}
+   * @description  Changes interval time to launch network checks.
+   * @param {number|NULL} intervalTime
    */
   changeInterval = (intervalTime = null) => {
     _intervalTime = intervalTime
+  },
+
+  /**
+   * @access public
+   * @function changeInternetResource
+   * @description  Changes the use of default INTERNET_REMOTE_RESOURCE for user provided internet resource.
+   * @param {Object|Array|NULL} internetResource
+   * @example <caption>Single internet resource case</caption>
+   * // singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
+   * // changeInternetResource(singleResource)
+   * @example <caption>Multiple internet resource case</caption>
+   * // multipleResource = [
+   * //   {url: 'http://fakeResourceOne.com', method: 'GET'}
+   * //   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
+   * // ]
+   * // changeInternetResource(multipleResource)
+   */
+  changeInternetResource = (internetResource = null) => {
+    _internetResource = internetResource
   },
 
   /**
@@ -410,6 +469,7 @@ export {
   getConnectionState,
   changeTimeout,
   changeInterval,
+  changeInternetResource,
   isCheckerActive,
   startChecker,
   stopChecker,

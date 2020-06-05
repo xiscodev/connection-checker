@@ -31,7 +31,8 @@
         }
       ],
       "semi": [2, "never"],
-      "one-var": ["error", "consecutive"]
+      "one-var": ["error", "consecutive"],
+      "prefer-promise-reject-errors": ["error", {"allowEmptyReject": true}]
     },
     "settings": {
       "import/resolver": {"node": {"path": ["src"] }},
