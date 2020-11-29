@@ -1,3 +1,5 @@
+import { TimeUnit } from 'timer-creator'
+
 /**
  * @description Collection of remote server urls with method to request resource.
  * @enum {Object}
@@ -14,14 +16,14 @@ const INTERNET_REMOTE_RESOURCE = [
  * @constant {number}
  */
 // eslint-disable-next-line one-var
-const REQUEST_TIMEOUT_TIME = 2000
+const REQUEST_TIMEOUT_TIME = 2 * TimeUnit.SECOND
 
 /**
  * @description Interval time to run fetch requests.
  * @constant {number}
  */
 // eslint-disable-next-line one-var
-const REQUEST_INTERVAL_TIME = 10000
+const REQUEST_INTERVAL_TIME = 10 * TimeUnit.SECOND
 
 export {
   INTERNET_REMOTE_RESOURCE,
