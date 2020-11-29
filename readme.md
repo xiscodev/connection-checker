@@ -4,33 +4,30 @@
 
 <h1 style="text-align:center;">Connection Checker</h1>
 
+## Why
+Sometimes [window.navigator.onLine](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine.onLine) API is not available and we need a good way to check if we got internet connection.
+
 ## What is this?
 A simple library to know the state of internet connection.
 
 ## How to use it?
-
 First you need to import it in your project
 
-- The require way
+_The require way_
 
 ```js
 let { ConnectionEvent, startChecker } = require("connection-checker");
 ```
 
-- The import way
+_The import way_
 
 ```js
 import { ConnectionEvent, checkOnDemand } from "connection-checker";
 ```
-.
-.
-.
 
 Then use it to know your state one time on demand
 
 ```js
-  import { ConnectionEvent, checkOnDemand } from "connection-checker";
-
   window.addEventListener(ConnectionEvent.ON_NETWORK_CONNECTED, function() {
     // YOUR OWN CODE AND STUFF
   })
@@ -38,12 +35,9 @@ Then use it to know your state one time on demand
   checkOnDemand()
 ```
 
-
 Or frequently (every 10 secs)
 
 ```js
-  import { ConnectionEvent, startChecker } from "connection-checker";
-
   window.addEventListener(ConnectionEvent.ON_NETWORK_CHANGED, function() {
     // YOUR OWN CODE AND STUFF
   })

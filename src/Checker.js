@@ -2,6 +2,7 @@ import ConnectionState from 'Constants/States'
 import { INTERNET_REMOTE_RESOURCE, REQUEST_TIMEOUT_TIME, REQUEST_INTERVAL_TIME } from 'Constants/Defaults'
 import { onNetworkChecking, onNetworkChanged, onNetworkConnected, onNetworkDisconnected } from 'NetworkEventEmitter'
 import { isObject, isArray, isNull, isString } from 'the-type-validator'
+import { createInterval, destroyInterval, existInterval } from 'timer-creator'
 
 /**
  * @access private
@@ -38,13 +39,15 @@ let _connectionState = null,
    */
   _internetResource = null
 
-/**
- * @access private
- * @function _getState
- * @description Retrieves the stored connection state.
- * @returns {ConnectionState}
- */
-const _getState = () => {
+const CHECKER_INTERVAL = 'checker_interval',
+
+  /**
+   * @access private
+   * @function _getState
+   * @description Retrieves the stored connection state.
+   * @returns {ConnectionState}
+   */
+  _getState = () => {
     return _connectionState
   },
 
@@ -116,13 +119,6 @@ class Checker {
     this.networkState = null
     /**
      * @access private
-     * @description Stores the generated interval for checker.
-     * @property {number|NULL}
-     * @memberof Checker
-    */
-    this.checkerInterval = null
-    /**
-     * @access private
      * @description Stores the request timeout time.
      * @property {number|NULL}
      * @memberof Checker
@@ -183,7 +179,7 @@ class Checker {
           fetchMethod = fetchData[index].method,
           fetchRequest = fetch(`${fetchUrl}/?nc=${noCache}`, {
             method: fetchMethod,
-            mode: 'cors',
+            mode: 'no-cors',
             timeout: this.fetchTimeout
           })
         networkRequests.push(fetchRequest)
@@ -326,7 +322,7 @@ class Checker {
    * @memberof Checker
    */
   _isCheckerActive () {
-    return !!this.checkerInterval
+    return !!existInterval(CHECKER_INTERVAL)
   }
 
   /**
@@ -337,9 +333,7 @@ class Checker {
    */
   _startConnectionChecker () {
     if (!this._isCheckerActive()) {
-      this.checkerInterval = setInterval(() => {
-        this._checkNetwork()
-      }, this.intervalTime)
+      createInterval(CHECKER_INTERVAL, this.intervalTime, this._checkNetwork)
     }
   }
 
@@ -351,7 +345,7 @@ class Checker {
    */
   _stopConnectionChecker () {
     if (this._isCheckerActive()) {
-      clearInterval(this.checkerInterval)
+      destroyInterval(CHECKER_INTERVAL)
       this._resetState()
     }
   }
@@ -404,14 +398,14 @@ const getConnectionState = () => {
    * @description  Changes the use of default INTERNET_REMOTE_RESOURCE for user provided internet resource.
    * @param {Object|Array|NULL} internetResource
    * @example <caption>Single internet resource case</caption>
-   * // singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
-   * // changeInternetResource(singleResource)
+   * singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
+   * changeInternetResource(singleResource)
    * @example <caption>Multiple internet resource case</caption>
-   * // multipleResource = [
-   * //   {url: 'http://fakeResourceOne.com', method: 'GET'}
-   * //   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
-   * // ]
-   * // changeInternetResource(multipleResource)
+   * multipleResource = [
+   *   {url: 'http://fakeResourceOne.com', method: 'GET'}
+   *   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
+   * ]
+   * changeInternetResource(multipleResource)
    */
   changeInternetResource = (internetResource = null) => {
     _internetResource = internetResource

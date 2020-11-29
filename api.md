@@ -14,9 +14,9 @@
 -   [startChecker][10]
 -   [stopChecker][11]
 -   [checkOnDemand][12]
--   [REQUEST_INTERVAL_TIME][13]
--   [REQUEST_INTERVAL_TIME][14]
--   [REQUEST_TIMEOUT_TIME][15]
+-   [INTERNET_REMOTE_RESOURCE][13]
+-   [REQUEST_TIMEOUT_TIME][14]
+-   [REQUEST_INTERVAL_TIME][15]
 -   [ConnectionEvent][16]
     -   [ON_NETWORK_CHECKING][17]
     -   [ON_NETWORK_CHANGED][18]
@@ -62,19 +62,19 @@ Single internet resource case
 
 
 ```javascript
-// singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
-// changeInternetResource(singleResource)
+singleResource = {url: 'http://fakeResourceZero.com', method: 'POST'}
+changeInternetResource(singleResource)
 ```
 
 Multiple internet resource case
 
 
 ```javascript
-// multipleResource = [
-//   {url: 'http://fakeResourceOne.com', method: 'GET'}
-//   {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
-// ]
-// changeInternetResource(multipleResource)
+multipleResource = [
+  {url: 'http://fakeResourceOne.com', method: 'GET'}
+  {url: 'https://fakeResourceTwo.com', method: 'HEAD'}
+]
+changeInternetResource(multipleResource)
 ```
 
 ## isCheckerActive
@@ -95,21 +95,21 @@ Stops the execution of network validations and destroys active instance of Check
 
 Creates instance of Checker, execute a network validation once, and destroys the created instance.
 
-## REQUEST_INTERVAL_TIME
+## INTERNET_REMOTE_RESOURCE
 
 Collection of remote server urls with method to request resource.
 
 Type: [Object][27]
 
-## REQUEST_INTERVAL_TIME
-
-Interval time to run fetch requests.
-
-Type: [number][26]
-
 ## REQUEST_TIMEOUT_TIME
 
 Timeout value for fetch requests.
+
+Type: [number][26]
+
+## REQUEST_INTERVAL_TIME
+
+Interval time to run fetch requests.
 
 Type: [number][26]
 
@@ -185,11 +185,11 @@ Type: [ConnectionState][24]
 
 [12]: #checkondemand
 
-[13]: #request_interval_time
+[13]: #internet_remote_resource
 
-[14]: #request_interval_time-1
+[14]: #request_timeout_time
 
-[15]: #request_timeout_time
+[15]: #request_interval_time
 
 [16]: #connectionevent
 
