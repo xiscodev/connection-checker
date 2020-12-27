@@ -1,4 +1,6 @@
 import ConnectionEvent from 'Constants/Events'
+import ConnectionState from 'Constants/States'
+import { setConnectionState } from 'storeChecker'
 
 /**
  * @access private
@@ -26,6 +28,7 @@ const onNetworkChecking = () => {
    * @returns {ConnectionEvent}
    */
   onNetworkConnected = () => {
+    setConnectionState(ConnectionState.CONNECTED)
     return new Event(ConnectionEvent.ON_NETWORK_CONNECTED)
   },
   /**
@@ -35,6 +38,7 @@ const onNetworkChecking = () => {
    * @returns {ConnectionEvent}
    */
   onNetworkDisconnected = () => {
+    setConnectionState(ConnectionState.DISCONNECTED)
     return new Event(ConnectionEvent.ON_NETWORK_DISCONNECTED)
   }
 
