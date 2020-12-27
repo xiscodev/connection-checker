@@ -1,6 +1,6 @@
 {
   "name": "connection-checker",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A network connection checker",
   "author": "José Diaz <contact@xisco.dev> (https://xisco.dev)",
   "license": "MIT",
